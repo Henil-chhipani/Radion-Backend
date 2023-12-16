@@ -2,20 +2,13 @@ import express from "express";
 import { MongoClient } from "mongodb";
 import cors from "cors";
 import bodyParser from "body-parser";
-import mongoose from "mongoose";
 import { User } from "./models/user.models.js";
-import { DB_Name } from "./constant.js";
 import dotenv from "dotenv";
+import connectDB from "./db/index.js";
 dotenv.config();
 
-main().catch((err) => console.log(err));
 
-async function main() {
-  await mongoose.connect(`${process.env.MONGODB_URL}/${DB_Name}`);
-  console.log("db connected");
-
-  // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
-}
+connectDB();
 
 const app = express();
 
