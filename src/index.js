@@ -5,12 +5,21 @@ import bodyParser from "body-parser";
 import { User } from "./models/user.models.js";
 import dotenv from "dotenv";
 import connectDB from "./db/index.js";
+import { app } from "./app.js";
 dotenv.config();
 
 
-connectDB();
+connectDB()
+.then(()=>{
+    app.listen(process.env.PORT || 3001);
+    console.log(`server is running at port : ${process.env.PORT}`)
+    
+})
+.catch((err)=>{
+    console.log("MongoBD is failed to connect");
+})
 
-const app = express();
+
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -43,6 +52,4 @@ app.get("/register", async (req, res) => {
   const docs = await User.find({});
   res.json(docs);
 });
-app.listen(3002, () => {
-  console.log("Server listening on port 3002");
-});
+
