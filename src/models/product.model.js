@@ -13,8 +13,7 @@ const prodcutSchema = new Schema(
       require: true,
     },
     product_img: {
-      data: Buffer,
-      contentType: String,
+      type: String,// cloudinary image 
     },
     product_discription:{
         type: String,

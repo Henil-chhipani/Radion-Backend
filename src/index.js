@@ -29,7 +29,11 @@ app.use(bodyParser.json());
 
 // Apply middleware to all routes
 // app.use(middleware);
+
+
+
 // customer data entry-------------------------------
+
 app.post("/register", async (req, res) => {
   let user = new User();
   user.FirstName = req.body.FirstName;
