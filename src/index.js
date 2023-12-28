@@ -8,7 +8,9 @@ import dotenv from "dotenv";
 import { DB_Name, user_db, employee_db, admin_db } from "./constant.js";
 import connectDB from "./db/index.js";
 import { app } from "./app.js";
-dotenv.config();
+dotenv.config({
+  path:'./.env'
+});
 
 connectDB()
   .then(() => {
@@ -29,8 +31,6 @@ app.use(bodyParser.json());
 
 // Apply middleware to all routes
 // app.use(middleware);
-
-
 
 // customer data entry-------------------------------
 

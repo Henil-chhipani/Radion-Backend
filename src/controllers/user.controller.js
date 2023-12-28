@@ -4,46 +4,59 @@ import { User } from "../models/user.models.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
 const registerUser = asyncHandler(async (req, res) => {
-  // get user data from form
+  // get user details from frontend
   // validation - not empty
-  //check if already exist: email
+  // check if user already exists: username, email
+  // check for images, check for avatar
+  // upload them to cloudinary, avatar
   // create user object - create entry in db
-  // remove password and refresh token from response
-  // check user created or not
+  // remove password and refresh token field from response
+  // check for user creation
   // return res
-  const { FirstName, LastName, DOB, Gender, Email, Phone, Password } = req.body;
-  console.log("email:", Email);
+
+  const { FirstName, LastName, DOB, Gender, Email, Phone, Address, Password } =
+    req.body;
+  //console.log("email: ", email);
 
   if (
-    [FirstName, LastName, DOB, Gender, Email, Phone, Password].some(
+    [FirstName, LastName, DOB, Gender, Email, Phone, Address, Password].some(
       (field) => field?.trim() === ""
     )
   ) {
-    throw new Apierror(400, "all field are nessary");
+    throw new Apierror(400, "All fields are required");
   }
-  const existedUser = User.findOne({
-    $or: [{ Email }, { Phone }],
+
+  const existedUser = await User.findOne({
+    $or: [{ Phone }, { Email }],
   });
+
   if (existedUser) {
-    throw new Apierror(409, "User with Email and Phone number already exists");
+    throw new Apierror(409, "User with email or username already exists");
   }
+  //console.log(req.files);
+
   const user = await User.create({
     FirstName,
     LastName,
+    DOB,
+    Gender,
     Email,
     Phone,
+    Address,
     Password,
   });
 
-  const cratedUser = await User.findById(user._id).select(
-    "-Password, -refershToken"
+  const createdUser = await User.findById(user._id).select(
+    "-Password -refreshToken"
   );
 
-  if (!cratedUser) {
-    throw new Apierror(500, "Somethig went worng while registring the user");
+  if (!createdUser) {
+    throw new Apierror(500, "Something went wrong while registering the user");
   }
-  return res.status(201).json(
-    new ApiResponse(200, cratedUser,"User register Successfully")
-  )
+
+  return res
+    .status(201)
+    .json(new ApiResponse(200, createdUser, "User registered Successfully"));
 });
+
 export { registerUser };

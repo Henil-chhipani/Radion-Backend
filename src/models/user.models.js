@@ -20,9 +20,7 @@ const userSchema = new Schema(
 
     Password: { type: String, require: true },
 
-    RePassword: { type: String, require: true },
-
-    Blance: { type: Number, require: true },
+    Blance: { type: Number, require: false},
 
     previousPurchase: [
       {
@@ -39,19 +37,20 @@ const userSchema = new Schema(
 );
 
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("Password")) return next();
+  if(!this.isModified("Password")) return next();
 
-  this.Password = await bcrypt.hash(this.Password, 10);
-  next();
-});
+  this.Password = await bcrypt.hash(this.Password, 10)
+  next()
+})
 
-userSchema.methods.isPasswordCorrect = async function (Password) {
-  return await bcrypt.compare(Password, this.Password);
-};
+userSchema.methods.isPasswordCorrect = async function(Password){
+  return await bcrypt.compare(Password, this.Password)
+}
 
 userSchema.methods.genrateAccessToken = function () {
   return jwt.sign(
     {
+      _id: this._id,
       Email: this.Email,
       FirstName: this.FirstName,
       Phone: this.Phone,
@@ -75,5 +74,4 @@ userSchema.methods.genrateRefreshToken = function () {
   );
 };
 
-userSchema.methods.genrateRefreshToken = function () {};
 export const User = mongoose.model("User", userSchema);
