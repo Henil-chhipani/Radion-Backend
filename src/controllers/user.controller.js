@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { Apierror } from "../utils/ApiError.js";
 import { User } from "../models/user.models.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import jwt from "jsonwebtoken";
 
 const genrateAccessAndRefreshToken = async (userID) => {
   try {
@@ -83,7 +84,7 @@ const loginUser = asyncHandler(async (req, res) => {
   // check pass
   // if there than login
   const { Email, Phone, Password } = req.body;
-  if (!Email || !Phone) {
+  if (!Email && !Phone) {
     throw new Apierror(400, "Email or phone num is require");
   }
   const user = await User.findOne({ $or: [{ Email }, { Phone }] });
@@ -128,7 +129,7 @@ const loginUser = asyncHandler(async (req, res) => {
 const logoutUser= asyncHandler(async(req,res)=>{
   await User.findByIdAndUpdate(req.user._id,{
     $set:{
-      refreshToken:undefined
+      refershToken:undefined
     }
   },
   {
@@ -146,5 +147,48 @@ const logoutUser= asyncHandler(async(req,res)=>{
   .status(200)
   .clearCookie("accessToken",options)
   .clearCookie("refershToken",options)
+  .json(new ApiResponse(200, {}, "User logged Out"))
 })
-export { registerUser, loginUser, logoutUser};
+
+const refreshAccessToken = asyncHandler(async(req,res)=>{
+  const incomingRefreshToken = req.cookies.refershToken || req.body.refreshToken
+
+  if(incomingRefreshToken){
+    throw new Apierror(401,"Unauthorized requst")
+  }
+  try {
+    const decodedToken = jwt.verify(
+      incomingRefreshToken,
+      process.env.REFRESH_TOKEN_SECRET
+    )
+    const user = await User.findById(decodedToken?._id)
+      if(!user){
+        throw new Apierror(401,"Invalid refresh token")
+      }
+      if(incomingRefreshToken !== user?.refershToken){
+        throw new Apierror(401,"Refresh token is expired or used ")
+      }
+  
+      const options = {
+        httpOnly:true,
+        secure: true
+      }
+  
+      const {accessToken,newRefreshToken} = await genrateAccessAndRefreshToken(user._id)
+      return res
+      .status(200)
+      .cookie("access Token",accessToken,options)
+      .cookie("refresh Token",newRefreshToken,options)
+      .json(
+        new ApiResponse(
+          200,
+          {accessToken,refreshToken:newRefreshToken},
+          "Access Token refreshed",
+        )
+      )
+  } catch (error) {
+    throw new Apierror(401,error?.message || "Invalid refresh token")
+  }
+
+})
+export { registerUser, loginUser, logoutUser, refreshAccessToken};
