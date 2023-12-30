@@ -1,6 +1,6 @@
-import mongoose, { Schema } from "mongoose";
+  import mongoose, { Schema } from "mongoose";
 
-const prodcutSchema = new Schema(
+const productSchema = new Schema(
   {
     product_id: {
       type: String,
@@ -13,27 +13,29 @@ const prodcutSchema = new Schema(
       require: true,
     },
     product_img: {
-      type: String,// cloudinary image 
+      type: String,
+      require: true,
+      // cloudinary image
     },
-    product_discription:{
-        type: String,
-        require: true
+    product_discription: {
+      type: String,
+      require: true,
     },
-    product_price:{
-        type: Number,
-        require: true
+    product_price: {
+      type: Number,
+      require: true,
     },
-    product_category:{ //like electinic prodcut or fasion product
-        type: String,
-        require: true
+    product_category: {
+      //like electinic prodcut or fasion product
+      type: String,
+      require: true,
     },
-    product_brand:{
-        type: String,
-        require: true
+    product_brand: {
+      type: String,
+      require: true,
     },
-}
- ,
+  },
   { timestamps: true }
 );
 
-export const ProdcutSchema = mongoose.model("Product", prodcutSchema);
+export const Product = mongoose.model("Product", productSchema);
