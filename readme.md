@@ -1,4 +1,3 @@
-
 # Radion
 
 Integrated Sales and Customer Management System
@@ -19,8 +18,34 @@ This is Sales excutive side frontend. Sales employee can add or remove product. 
 
 This is Admin side frontend. Admin can restrict the user, Add sales emplee and give the singup and longin access.
 
+
+
 ## Technology Stack:
 
-All frontend work done in React js, Backend word done in node js and database i use i mongodb. Overall this complete in MERN stack.
+For forntend : React Js and MDB and Material Ui library
+
+For Backenf : Node JS and Expressjs
+
+For Database : MongoDB
+
+For checking backend: Postman
+
+Git, Github
+
+For Cloud photos : cloudinary
+
+## Runing Fuctinalities :
+
+    Resgistring user and store in MongoDb
+
+    Login with email or phone number
+
+    Add Product (Sales employee)
+
+    Show all products (Customer & sales team)
+
+    Buy a product (Customer)
+
+    Add order details in Order Database
 
 ### Still building ............................................
