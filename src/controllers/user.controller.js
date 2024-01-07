@@ -68,7 +68,7 @@ const registerUser = asyncHandler(async (req, res) => {
     Password,
     Blance,
   });
-  
+
   const createdUser = await User.findById(user._id).select(
     "-Password -refreshToken"
   );
@@ -101,8 +101,10 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Apierror(401, "Password is not correct");
   }
 
-  const { accessToken, refreshToken } = await genrateAccessAndRefreshToken(user._id);
-  console.log("acc",accessToken);
+  const { accessToken, refreshToken } = await genrateAccessAndRefreshToken(
+    user._id
+  );
+  console.log("acc", accessToken);
   const logedInUser = await User.findById(user._id).select(
     "-Password -refreshToken"
   );
@@ -110,7 +112,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: true,
-    path: '/',
+    path: "/",
   };
   return res
     .status(200)
@@ -231,15 +233,34 @@ const takeOrder = asyncHandler(async (req, res) => {
     throw new Apierror(500, "Error placing the order");
   }
 });
-const getUser = asyncHandler(async(req,res)=>{
-  const user=await User.findById(req.user._id).select('-password');
-  if(!user){
-    throw new Apierror(404,"User not found");
+const getUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id).select("-password");
+  if (!user) {
+    throw new Apierror(404, "User not found");
   }
   try {
-    return res.status(201).json(new ApiResponse(201,user,"User details"))
+    return res.status(201).json(new ApiResponse(201, user, "User details"));
   } catch (error) {
-    throw new Apierror(500,"Error in getting user")
+    throw new Apierror(500, "Error in getting user");
   }
-})
-export { registerUser, loginUser, logoutUser, refreshAccessToken, takeOrder,getUser };
+});
+const getAllUser = asyncHandler(async (req, res) => {
+  const docs = await User.find({});
+  if (!docs) {
+    throw new Apierror(404, "No users available");
+  }
+  try {
+    return res.status(200).json(new ApiResponse(200, docs, "Users Details"));
+  } catch (error) {
+    throw new Apierror(500, "error in getting users");
+  }
+});
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  refreshAccessToken,
+  takeOrder,
+  getUser,
+  getAllUser,
+};
