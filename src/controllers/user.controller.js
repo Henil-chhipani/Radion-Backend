@@ -37,7 +37,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const { FirstName, LastName, DOB, Gender, Email, Phone, Address, Password } =
     req.body;
-  // console.log("email: ", email);
+  console.log("email: ", req.body);
 
   if (
     [FirstName, LastName, DOB, Gender, Email, Phone, Address, Password].some(
@@ -55,6 +55,7 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Apierror(409, "User with email or username already exists");
   }
   //console.log(req.files);
+  const Blance = 0;
 
   const user = await User.create({
     FirstName,
@@ -65,8 +66,9 @@ const registerUser = asyncHandler(async (req, res) => {
     Phone,
     Address,
     Password,
+    Blance,
   });
-
+  
   const createdUser = await User.findById(user._id).select(
     "-Password -refreshToken"
   );
@@ -229,5 +231,15 @@ const takeOrder = asyncHandler(async (req, res) => {
     throw new Apierror(500, "Error placing the order");
   }
 });
-
-export { registerUser, loginUser, logoutUser, refreshAccessToken, takeOrder };
+const getUser = asyncHandler(async(req,res)=>{
+  const user=await User.findById(req.user._id).select('-password');
+  if(!user){
+    throw new Apierror(404,"User not found");
+  }
+  try {
+    return res.status(201).json(new ApiResponse(201,user,"User details"))
+  } catch (error) {
+    throw new Apierror(500,"Error in getting user")
+  }
+})
+export { registerUser, loginUser, logoutUser, refreshAccessToken, takeOrder,getUser };

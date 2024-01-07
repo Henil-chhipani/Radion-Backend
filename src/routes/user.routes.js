@@ -5,6 +5,7 @@ import {
   logoutUser,
   refreshAccessToken,
   takeOrder,
+  getUser,
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import {
@@ -23,6 +24,7 @@ router.route("/login").post(loginUser);
 router.route("/refresh-token").post(refreshAccessToken);
 router.route("/logout").post(verifyJWT, logoutUser);
 router.route("/takeOrder").post(verifyJWT,takeOrder);
+router.route("/getUser").get(verifyJWT,getUser)
 
 // adding product
 router
